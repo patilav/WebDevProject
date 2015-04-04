@@ -1,159 +1,195 @@
-#!/bin/env node
-//  OpenShift sample Node application
+/*
+ * Project Name: ArtisticCollab 
+ * Created by: Avanti Patil 
+ */
+
+// Required node modules for project 
+
 var express = require('express');
-var fs      = require('fs');
+var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
+var multer = require('multer');
+
+// creating a new nodejs app with express module
+var app = express();
 
 
-/**
- *  Define the sample application.
- */
-var SampleApp = function() {
+// for parsing application/json
+app.use(bodyParser.json());
 
-    //  Scope.
-    var self = this;
+// for parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true })); 
 
+// for parsing multipart/form-data
+app.use(multer()); 
 
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
+//max limit to save images
+app.use(express.bodyParser({ limit: '50mb' })); 
 
-    /**
-     *  Set up server IP address and port # using env variables/defaults.
-     */
-    self.setupVariables = function() {
-        //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+//mongodb connection string for the remote database on openshift database 
+var connectionString = process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/artisticcollab';
 
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        };
-    };
+//connecting with mongoose and database string to the database 
+mongoose.connect(connectionString);
 
+// (**** DANGER ****) Not be used in production
+// To check all the process details running on the Openshift Server
+//app.get('/process', function (req, res) {
+//    res.json(process.env);
+//})
 
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
+// Serve static content for the app from the “public” directory in the application directory
+app.use(express.static(__dirname + '/public'));
 
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-    };
+//Sample to check if the Server is running
+app.get('/content', function (req, res) {
+    res.send('<h1>Hello from Open Shift - Static Message</h1>');
+});
 
+//--------------------Schemas--------------------------------------------------------
 
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
+var userSchema = new mongoose.Schema({
+    username: String,
+    password: String,
+    email: String,
+    firstName: String,
+    lastName: String,
+    photo: String
+}, { collection: 'user' });
 
-
-    /**
-     *  terminator === the termination handler
-     *  Terminate server on receipt of the specified signal.
-     *  @param {string} sig  Signal to terminate on.
-     */
-    self.terminator = function(sig){
-        if (typeof sig === "string") {
-           console.log('%s: Received %s - terminating sample app ...',
-                       Date(Date.now()), sig);
-           process.exit(1);
-        }
-        console.log('%s: Node server stopped.', Date(Date.now()) );
-    };
+var commentSchema = new mongoose.Schema({
+    username: String,
+    text: String
+}, { collection: 'comment' });
 
 
-    /**
-     *  Setup termination handlers (for exit and a list of signals).
-     */
-    self.setupTerminationHandlers = function(){
-        //  Process on exit and signals.
-        process.on('exit', function() { self.terminator(); });
+var artworkSchema = new mongoose.Schema({
+    username: String,
+    text: String
+}, { collection: 'artwork' });
 
-        // Removed 'SIGPIPE' from the list - bugz 852598.
-        ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-         'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-        ].forEach(function(element, index, array) {
-            process.on(element, function() { self.terminator(element); });
+
+// Creating the Models for the schemas 
+var userModel = mongoose.model("UserModel", userSchema);
+var commentModel = mongoose.model("CommentModel", commentSchema);
+var artworkModel = mongoose.model("ArtworkModel", artworkSchema);
+
+//-----------------------------mongo 00-comment ---------------------------------------
+
+app.get('/usercomment', function (req, res) {
+    commentModel.find(function (err, data) {
+        res.json(data);
+    });
+});
+
+app.post('/usercomment', function (req, res) {
+    var comment = new commentModel(req.body);
+    comment.save(function () {
+        commentModel.find(function (err, data) {
+            res.json(data);
         });
-    };
+    });
+});
 
-
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
-
-    /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
-
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
-
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
-    };
-
-
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
-    self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
-
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
-    };
-
-
-    /**
-     *  Initializes the sample application.
-     */
-    self.initialize = function() {
-        self.setupVariables();
-        self.populateCache();
-        self.setupTerminationHandlers();
-
-        // Create the express server and routes.
-        self.initializeServer();
-    };
-
-
-    /**
-     *  Start the server (starts up the sample application).
-     */
-    self.start = function() {
-        //  Start the app on the specific interface (and port).
-        self.app.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
+app.post('/updateprofile', function (req, res) {
+    var username = req.body.username;
+    userModel.update({ username: username }, { $set: req.body }, function (err, data) {
+        userModel.find(function (err, data) {
+            res.json(data);
         });
-    };
+    });
+});
 
-};   /*  Sample Application.  */
+app.post('/login', function (req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+
+    userModel.find({ username: username, password: password }, function (err, data) {
+        res.json(data);
+    });
+});
+
+app.post('/signup', function (req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+    var email = req.body.email;
+    var firstName = req.body.firstName;
+    var lastName = req.body.lastName;
+    var photo = req.body.photo;
+
+    userModel.find({ username: username }, function (err, data) {
+        if (data.length > 0) {
+            res.json({ response: 'false' });
+        } else {
+            new userModel({
+                username: username,
+                password: password,
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                photo: photo
+            }).save(function (err, data) {
+                res.json({ response: 'true' });
+            });
+        }
+    });
+
+});
 
 
+//----------------------------000-clientApp--------------------------------------
 
-/**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
+app.get('/', function (req, res) {
+    res.send('Hello World');
+});
 
+app.get('/login', function (req, res) {
+    res.json(login);
+});
+
+app.get('/login/:index', function (req, res) {
+    var idx = req.params.index; // or req.params['index'];
+    res.json(login[idx]);
+});
+
+app.post('/login', function (req, res) {
+    var obj = req.body;
+    login.push(obj);
+    res.json(login);
+});
+
+app.put('/login/:index', function (req, res) {
+    var index = req.params.index;
+    login[index] = req.body;
+    res.json(login);
+});
+
+app.delete('/login/:index', function (req, res) {
+    var idx = req.params.index;
+    login.splice(idx, 1);
+    res.json(login);
+});
+
+app.get('/login/:index/application', function (req, res) {
+    var idx = req.params.index; // or req.params['index'];
+    res.json(login[idx].application);
+});
+
+app.get('/login/:index/application/:appIndex', function (req, res) {
+    var idx = req.params.index; // or req.params['index'];
+    var appIdx = req.params.appIndex;
+
+    res.json(login[idx].application[appIdx]);
+});
+
+app.get('/bye', function (req, res) {
+    res.send('Good Bye');
+});
+
+//---------------------------------------------------------------------------------------
+// Connection configuration details with local and openshift server
+
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+
+app.listen(port, ipaddress);
