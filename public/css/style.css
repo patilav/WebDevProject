@@ -1,0 +1,22 @@
+﻿body {
+    background-color: lightgoldenrodyellow;
+}
+
+h1 {
+    color: black;
+    text-align: center;
+}
+
+#text {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#doc {
+    text-align: center;
+    font-size: large;
+}
+
+h3 {
+    color: blue;
+}
