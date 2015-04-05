@@ -1,9 +1,10 @@
 ﻿body {
-    background-color: lightgoldenrodyellow;
+ 
+    background-image: url("../images/bg.jpg");
 }
 
 h1 {
-    color: black;
+    color: white;
     text-align: center;
 }
 
@@ -15,6 +16,10 @@ h1 {
 #doc {
     text-align: center;
     font-size: large;
+}
+
+div {
+    color: black;
 }
 
 h3 {

@@ -3,13 +3,14 @@
 <head>
     <title>SignUp</title>
     <link rel="stylesheet" href="../bootstrap-3.3.2-dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/001-style.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/001-style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/mycarousal.css" />
     <script src="../Libraries/angular.min.js"></script>
     <script src="../Libraries/angular-route.min.js"></script>
     <script src="../Libraries/ui-bootstrap-tpls-0.12.1.min.js"></script>
     <script src="../Libraries/jquery-1.11.2.js"></script>
-    <script src="js/signup.js"></script>
+    <script src="../js/main.js"></script>
 </head>
 <body ng-app="ArtisticCollab">
     <div ng-controller="NavController">
@@ -30,6 +31,7 @@
                         <li><a href="#about">About</a></li>
                         <li ng-show="currentUser"><a href="#profile/{{currentUser.username}}">Profile</a></li>
                         <li ng-show="currentUser"><a href="#comment/{{currentUser.username}}">Comment</a></li>
+                        <li ng-show="currentUser"><a href="#artwork/{{currentUser.username}}">Artwork</a></li>
                     </ul>
                     <form ng-show="!currentUser" class="navbar-form navbar-right">
                         <div class="form-group">
