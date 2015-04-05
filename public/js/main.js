@@ -36,7 +36,8 @@ app.controller("NavController", function ($scope, LoginService, $location, $moda
 app.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
         when('/home', {
-          templateUrl: 'partials/home.html'
+            templateUrl: 'partials/home.html',
+            controller: 'HomeController'
         }).
         when('/profile/:username', {
             templateUrl: 'partials/profile.html',
@@ -209,7 +210,7 @@ app.controller("ArtworkController", function ($scope, $routeParams, $http) {
     });
 
     $scope.add = function (art) {
-        var obj = { username: username, type: "poem", artwork: art };
+        var obj = { username: username, type: $scope.text, artwork: art };
         $scope.type = null;
         $scope.artwork = null;
         $http.post("/userartwork", obj)
@@ -298,4 +299,21 @@ app.controller("SignupController", function ($scope, $modalInstance, LoginServic
         $modalInstance.dismiss('cancel');
     };
 
+});
+
+
+app.controller("HomeController", function ($scope, $routeParams, $http) {
+    $scope.myInterval = 5000;
+    var slides = $scope.slides = [];
+    $scope.addSlide = function () {
+        var newWidth = 600 + slides.length + 1;
+        slides.push({
+            image: 'http://placekitten.com/' + newWidth + '/300',
+            text: ['More', 'Extra', 'Lots of', 'Surplus'][slides.length % 4] + ' ' +
+              ['Cats', 'Kittys', 'Felines', 'Cutes'][slides.length % 4]
+        });
+    };
+    for (var i = 0; i < 4; i++) {
+        $scope.addSlide();
+    }
 });
