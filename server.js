@@ -27,7 +27,7 @@ app.use(multer());
 app.use(express.bodyParser({ limit: '50mb' })); 
 
 //mongodb connection string for the remote database on openshift database 
-var connectionString = process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/artisticcollab';
+var connectionString = process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/cs5610project';
 
 //connecting with mongoose and database string to the database 
 mongoose.connect(connectionString);
