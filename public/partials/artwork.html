@@ -1,0 +1,36 @@
+﻿<h1>Artworks:</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <td><input class="form-control" ng-model="text" id="artwork" placeholder="Enter poem" /></td>
+        </tr>
+        <tr>
+            <td>
+                <button ng-click="add(text)" class="btn btn-success pull-right">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+                <br /><br />
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="3">
+                <h2 style="text-align:center">My Artwork</h2>
+            </td>
+        </tr>
+        <tr ng-repeat="aw in artwork">
+            <td>{{aw.username}}</td>
+            <td>{{aw.type}}</td>
+            <td>{{aw.artwork}}</td> 
+            <td>
+                <button ng-click="delete(aw._id)" class="btn btn-danger pull-right">
+                    <span class="glyphicon glyphicon-minus-sign"></span>
+                </button>
+                <br /><br />
+            </td>
+
+        </tr>
+    </tbody>
+</table>

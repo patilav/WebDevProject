@@ -1,0 +1,35 @@
+﻿
+h1
+{
+    font-weight: bold;
+}
+
+h2
+{
+    color: navy;
+}
+
+.carousel-blurb
+{
+    margin: 0;     
+    color: #666;
+    padding-top: 90px;
+    font-size: 52px; 
+}
+
+.item
+{
+    background: #333;    
+    text-align: center;
+    height: 300px !important;
+}
+
+.carousel
+{
+    margin-top: 20px;
+}
+
+.bs-example
+{
+    margin: 20px;
+}
