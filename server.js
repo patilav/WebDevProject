@@ -65,7 +65,8 @@ var commentSchema = new mongoose.Schema({
 
 var artworkSchema = new mongoose.Schema({
     username: String,
-    text: String
+    type: String,
+    artwork: String
 }, { collection: 'artwork' });
 
 
@@ -74,7 +75,6 @@ var userModel = mongoose.model("UserModel", userSchema);
 var commentModel = mongoose.model("CommentModel", commentSchema);
 var artworkModel = mongoose.model("ArtworkModel", artworkSchema);
 
-//-----------------------------mongo 00-comment ---------------------------------------
 
 app.get('/usercomment', function (req, res) {
     commentModel.find(function (err, data) {
@@ -86,6 +86,21 @@ app.post('/usercomment', function (req, res) {
     var comment = new commentModel(req.body);
     comment.save(function () {
         commentModel.find(function (err, data) {
+            res.json(data);
+        });
+    });
+});
+
+app.get('/userartwork', function (req, res) {
+    artworkModel.find(function (err, data) {
+        res.json(data);
+    });
+});
+
+app.post('/userartwork', function (req, res) {
+    var artwork = new artworkModel(req.body);
+    artwork.save(function () {
+        artworkModel.find(function (err, data) {
             res.json(data);
         });
     });
