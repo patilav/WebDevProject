@@ -48,13 +48,18 @@ app.get('/content', function (req, res) {
 
 //--------------------Schemas--------------------------------------------------------
 
+var artworkidSchema = new mongoose.Schema({
+    artworkid: String
+});
+
 var userSchema = new mongoose.Schema({
     username: String,
     password: String,
     email: String,
     firstName: String,
     lastName: String,
-    photo: String
+    photo: String,
+    myfavartworks: [String]
 }, { collection: 'user' });
 
 var commentSchema = new mongoose.Schema({
@@ -63,19 +68,39 @@ var commentSchema = new mongoose.Schema({
 }, { collection: 'comment' });
 
 
+var artcommentSchema = new mongoose.Schema({
+    text: String,
+    username : String
+});
+
+//step-1 search for that particular user in userSchema {
+//step-2 insert your artwork in artworkSchema
+//step-3 push() into myartworkID }
+
 var artworkSchema = new mongoose.Schema({
+    artworkname: String,
     username: String,
     type: String,
-    artwork: String
+    artwork: String,
+    upvotes: String,
+    comments: [artcommentSchema],
+    created: { type: Date, default: Date.now }
 }, { collection: 'artwork' });
 
 
 // Creating the Models for the schemas 
 var userModel = mongoose.model("UserModel", userSchema);
+
+var artworkidSchemaModel = mongoose.model("artworkidSchemaModel", artworkidSchema);
+
 var commentModel = mongoose.model("CommentModel", commentSchema);
+
+var artcommentModel = mongoose.model("ArtCommentModel", artcommentSchema);
+
 var artworkModel = mongoose.model("ArtworkModel", artworkSchema);
 
-
+//-------------------------------------------------------------
+// Sample comment model with user info 
 app.get('/usercomment', function (req, res) {
     commentModel.find(function (err, data) {
         res.json(data);
@@ -84,54 +109,147 @@ app.get('/usercomment', function (req, res) {
 
 app.post('/usercomment', function (req, res) {
     var comment = new commentModel(req.body);
-    comment.save(function () {
+        comment.save(function () {
         commentModel.find(function (err, data) {
             res.json(data);
         });
     });
 });
-
-app.get('/userartwork', function (req, res) {
+//-------------------------------------------------------------
+// Sample get and post for user artwork
+app.get('/api/userartwork', function (req, res) {
     artworkModel.find(function (err, data) {
         res.json(data);
     });
 });
 
-app.post('/userartwork', function (req, res) {
+app.post('/api/userartwork', function (req, res) {
     var artwork = new artworkModel(req.body);
-    artwork.save(function () {
+        artwork.save(function () {
+        artworkModel.find({ "username": req.body.username }, function (err, data) {
+            res.json(data);
+        });
+    });
+});
+
+//Find artwork by id  
+app.get("/api/userartwork/:id", function (req, resp) {
+    artworkModel.findById(req.params.id, function (err, doc) {
+        resp.json(doc);
+    });
+});
+
+//Find artwork - comments by id  
+app.get("/api/userartwork/:id/comments", function (req, resp) {
+    artworkModel.findById(req.params.id, function (err, doc) {
+        resp.json(doc.comments);
+    });
+});
+
+//Find myartwork by id using the username 
+app.get("/api/myuserartwork/:id", function (req, resp) {
+    artworkModel.find({ "username": req.params.id }, function (err, doc) {
+        resp.json(doc);
+    });
+});
+
+app.post('/updateprofilewithmyartwork', function (req, res) {
+    console.log(req.body.username, req.body.artworkid);
+    userModel.find({ "username": req.body.username }, function (err, data) {
+        //data.myfavartworks.push(req.body.artworkid);
+        console.log(data.myfavartworks);
+        //data.update({ $set: { "myfavartworks": data.myfavartworks } }, function (err, doc) {
+        //    res.json({success: "Inserted Peacefully"});
+        //});
+        //data.save(function (err, data) {
+        //    userModel.find(function (err, data) {
+        //        res.json(data);
+        //    });
+        //});
+    });
+});
+
+//Delete the artwork by id
+app.delete("/api/userartwork/:id", function (req, resp) {
+    artworkModel.find({ _id: req.body.id , username : req.body.username }, function (err, doc) {
+        doc.remove();
         artworkModel.find(function (err, data) {
-            res.json(data);
+            resp.json(data);
         });
     });
 });
 
-app.post('/updateprofile', function (req, res) {
+//Increase the upvotes by the id 
+app.post('/api/userartworklike/:id', function (req, res) {
+    artworkModel.findById(req.params.id, function (err, data) {
+        data.update({ $set: { "upvotes": Number(data.upvotes) + 1 } }, function (err, doc) {
+            artworkModel.find(function (err, data) {
+                res.json(data);
+            });
+        });
+    });
+});
+
+// -------------- Single update -----------
+// TBD
+app.post('/updateprofilewithmyartwork', function (req, res) {
+    console.log(req.body.username, req.body.artworkid);
+    userModel.find({ "username": req.body.username }, function (err, data) {
+        //data.myfavartworks.push(req.body.artworkid);
+        console.log(data.myfavartworks);
+        //data.update({ $set: { "myfavartworks": data.myfavartworks } }, function (err, doc) {
+        //    res.json({success: "Inserted Peacefully"});
+        //});
+        //data.save(function (err, data) {
+        //    userModel.find(function (err, data) {
+        //        res.json(data);
+        //    });
+        //});
+    });
+});
+
+//--------------------------------------------------------------------------------
+//Update the user profile by id  
+app.post('/api/updateprofile', function (req, res) {
     var username = req.body.username;
-    userModel.update({ username: username }, { $set: req.body }, function (err, data) {
-        userModel.find(function (err, data) {
-            res.json(data);
+    userModel.findById(req.params.id, function (err, data) {
+        data.username = username;
+        data.password = req.body.password;
+        data.email = req.body.email;
+        data.firstName = req.body.firstName;
+        data.lastName = req.body.lastName;
+        data.photo = req.body.photo;
+        data.myartwork = req.body.myartwork;
+        data.myfavartwork = req.body.myfavartwork;
+        data.save(function (err, data) {
+            userModel.find(function (err, data) {
+                res.json(data);
+            });
         });
     });
 });
 
-app.post('/login', function (req, res) {
+//Login to the application check 
+app.post('/api/login', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
-
+    var userid = req.body._id;
     userModel.find({ username: username, password: password }, function (err, data) {
         res.json(data);
     });
 });
 
-app.post('/signup', function (req, res) {
+
+//Create a new user using the api
+app.post('/api/signup', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var email = req.body.email;
     var firstName = req.body.firstName;
     var lastName = req.body.lastName;
     var photo = req.body.photo;
-
+    var myartwork = null;
+    var myfavartwork = null;
     userModel.find({ username: username }, function (err, data) {
         if (data.length > 0) {
             res.json({ response: 'false' });
@@ -142,7 +260,9 @@ app.post('/signup', function (req, res) {
                 email: email,
                 firstName: firstName,
                 lastName: lastName,
-                photo: photo
+                photo: photo,
+                myartwork: myartwork,
+                myfavartwork: myfavartwork
             }).save(function (err, data) {
                 res.json({ response: 'true' });
             });
@@ -151,54 +271,8 @@ app.post('/signup', function (req, res) {
 
 });
 
-
-//----------------------------000-clientApp--------------------------------------
-
 app.get('/', function (req, res) {
     res.send('Hello World');
-});
-
-app.get('/login', function (req, res) {
-    res.json(login);
-});
-
-app.get('/login/:index', function (req, res) {
-    var idx = req.params.index; // or req.params['index'];
-    res.json(login[idx]);
-});
-
-app.post('/login', function (req, res) {
-    var obj = req.body;
-    login.push(obj);
-    res.json(login);
-});
-
-app.put('/login/:index', function (req, res) {
-    var index = req.params.index;
-    login[index] = req.body;
-    res.json(login);
-});
-
-app.delete('/login/:index', function (req, res) {
-    var idx = req.params.index;
-    login.splice(idx, 1);
-    res.json(login);
-});
-
-app.get('/login/:index/application', function (req, res) {
-    var idx = req.params.index; // or req.params['index'];
-    res.json(login[idx].application);
-});
-
-app.get('/login/:index/application/:appIndex', function (req, res) {
-    var idx = req.params.index; // or req.params['index'];
-    var appIdx = req.params.appIndex;
-
-    res.json(login[idx].application[appIdx]);
-});
-
-app.get('/bye', function (req, res) {
-    res.send('Good Bye');
 });
 
 //---------------------------------------------------------------------------------------
