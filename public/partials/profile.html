@@ -1,4 +1,4 @@
-﻿<div class="container">
+﻿<div-container class="container center-block">
     <h1>Edit Profile</h1>
     <hr>
     <div class="row">
@@ -7,11 +7,9 @@
             <div class="text-center">
                 <img ng-src="{{loc}}" width="100" height="100" class="avatar img-thumbnail" alt="avatar">
                 <h6>Upload a different photo...</h6>
-
                 <input ng-model="photo" class="form-control" id="filePicker" type="file">
             </div>
         </div>
-
         <!-- edit form column -->
         <div class="col-md-9 personal-info">
             <div ng-show="match" class="alert alert-info alert-dismissable">
@@ -23,7 +21,6 @@
                 Saved
             </div>
             <h3>Personal info</h3>
-
             <form class="form-horizontal" role="form">
                 <div class="form-group">
                     <label class="col-lg-3 control-label">First name:</label>
@@ -72,4 +69,4 @@
             </form>
         </div>
     </div>
-</div>
+</div-container>

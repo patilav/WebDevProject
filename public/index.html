@@ -1,17 +1,26 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>SignUp</title>
+    <title>Artistic Collab - Share your creativity</title>
     <link rel="stylesheet" href="../bootstrap-3.3.2-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/001-style.css" />
-    <link rel="stylesheet" type="text/css" href="../css/mycarousal.css" />
+    <link rel="stylesheet" href="../css/agency.css.css" />
+    
     <script src="../Libraries/angular.min.js"></script>
     <script src="../Libraries/angular-route.min.js"></script>
     <script src="../Libraries/ui-bootstrap-tpls-0.12.1.min.js"></script>
     <script src="../Libraries/jquery-1.11.2.js"></script>
+    <script src="../bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
+    
     <script src="../js/main.js"></script>
-    </head>
+    <script src="../js/home.js"></script>
+    <script src="../js/signup.js"></script>
+    <script src="../js/profile.js"></script>
+    <script src="../js/artwork.js"></script>
+    <script src="../js/comment.js"></script>
+
+</head>
 <body ng-app="ArtisticCollab">
     <div ng-controller="NavController">
         <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -41,7 +50,7 @@
                             <input type="password" ng-model="user.password" placeholder="Password" class="form-control">
                         </div>
                         <button type="submit" class="{{color}}" ng-click="login()">Sign in</button>
-                        <button class="btn btn-success" ng-click="signUp()">Create Account</button>
+                        <button class="btn btn-success" ng-click="signUp()">Sign up</button>
                     </form>
                     <form ng-show="currentUser" class="navbar-form navbar-right">
                         <button type="submit" ng-click="logout()" class="btn btn-success">Sign out</button>

@@ -1,36 +1,108 @@
 ﻿<h1>Artworks:</h1>
+<div class="container center-block">
+    <table class="table table-striped alert-success">
+        <thead>
+            <tr>
+                <td colspan="4">
+                    <h2 style="text-align:center">Create new Artwork</h2>
+                </td>
+            </tr>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <td><input class="form-control" ng-model="text" id="artwork" placeholder="Enter poem" /></td>
-        </tr>
-        <tr>
-            <td>
-                <button ng-click="add(text)" class="btn btn-success pull-right">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </button>
-                <br /><br />
-            </td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td colspan="3">
-                <h2 style="text-align:center">My Artwork</h2>
-            </td>
-        </tr>
-        <tr ng-repeat="aw in artwork">
-            <td>{{aw.username}}</td>
-            <td>{{aw.type}}</td>
-            <td>{{aw.artwork}}</td> 
-            <td>
-                <button ng-click="delete(aw._id)" class="btn btn-danger pull-right">
-                    <span class="glyphicon glyphicon-minus-sign"></span>
-                </button>
-                <br /><br />
-            </td>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Artwork Name: 
+                    <input ng-model="artworkname" class="form-control" id="artworkname" type="text">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Type of artwork : <br />
+                    <select class="form-control" ng-model="type" id="type" ng-change="changetype()">
+                        <option class="active">Writing</option>
+                        <option>Video link</option>
+                        <option>Music Link</option>
+                        <option>Image</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea class="form-control" ng-model="artworks" rows="15" ng-show="write" id="artworks" placeholder="Enter text"> 
+                    </textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span ng-hide="write">
+                        <img ng-src="{{loc}}" width="100" height="100" class="avatar img-thumbnail" alt="avatar">
+                        <h6>Upload photo...</h6>
+                        <input ng-model="photo" class="form-control" id="filePicker" type="file">
+                    </span>
+                </td>
+            </tr>
 
-        </tr>
-    </tbody>
-</table>
+            <tr>
+                <td>
+                    <button ng-click="add()" class="btn btn-success pull-right">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <br /><br />
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+    <h3>Artwork info</h3>
+
+    <div class="container div-container center-block img-rounded">
+        <div class="row" ng-repeat="aw in artwork">
+            <!-- left column -->
+            <div class="col-md-6">
+                Artwork name:
+                {{aw.artworkname}}
+                ||
+                 Creator name:
+                {{aw.username}}
+                <div class="text-center alert-success">
+                    <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar" width="200" height="200">
+                    <span ng-hide="aw.type == 'Image'">{{aw.artwork}}</span>
+                    <div ng-show="aw.type == 'Video link'">
+                        <iframe width="300" height="300" ng-src="{{trustSrc(aw.artwork)}}"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 personal-info">
+                   <div class="form-group col-md-2">
+                        <button class="btn btn-danger pull-right" ng-click="remove(aw._id)">
+                            <span class="glyphicon glyphicon-remove ">
+                            </span>
+                        </button>
+                    </div>
+                       &nbsp;
+                    <div class="form-group col-md-2">
+                        <button class="btn btn-danger pull-right" ng-click="upvote(aw._id)">
+                             Likes : {{aw.upvotes}}
+                        </button>
+                    </div>
+                    <br />
+                <br />
+                
+
+                <div class="form-control row" ng-repeat="cmt in aw.comments">
+                    Comments:
+                        <div class="form-control row">
+                        Comment by user: {{cmt.username}}  
+                    </div>
+                    <div class="form-control row">
+                        Comment : {{cmt.text}}
+                    </div>
+                    
+                </div>
+                <br /><br /><br /><br /><br />
+                </div>
+    </div>
+</div>
+</div>

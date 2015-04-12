@@ -6,7 +6,7 @@
         <!-- left column -->
         <div class="col-md-3">
             <div class="text-center">
-                <img ng-src="{{loc}}" width="100" height="100" class="avatar img-circle" alt="avatar">
+                <img ng-src="{{loc}}" width="100" height="100" class="avatar img-thumbnail" alt="avatar">
                 <h6>Upload photo...</h6>
 
                 <input ng-model="photo" class="form-control" id="filePicker" type="file">
@@ -23,7 +23,7 @@
 
             <form class="form-horizontal" role="form">
                 <div class="form-group">
-                    <code class="pull-right">All fields are mandatory</code>
+                    <code class="pull-left">All fields are mandatory</code>
                 </div>
                 <div class="form-group">
                     <label class="col-lg-3 control-label">First name:</label>
@@ -66,6 +66,6 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="ok()">Ok</button>
+    <button class="btn btn-primary" ng-click="ok()">Sign up</button>
     <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
 </div>
