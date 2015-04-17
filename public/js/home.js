@@ -33,7 +33,7 @@
         $scope.addSlide();
     }
     */
-    $http.get("/userartwork")
+    $http.get("/api/userartwork")
     .success(function (response) {
         $scope.artwork = response;
     });
@@ -47,5 +47,34 @@
         .success(function (response) {
             $scope.artwork = response;
         });
+    };
+
+
+    $scope.search = function () {
+        /*if ($scope.searchNameString != null  && $scope.searchTypeString != null) {
+            var obj = { searchNameString: $scope.searchNameString, searchTypeString: $scope.searchTypeString };
+            console.log(obj);
+            $http.get("/api/userartwork/search", obj)
+            .success(function (response) {
+                console.log("this got executed"+ response);
+                $scope.artwork = response;
+                $scope.searchNameString = null;
+                $scope.searchTypeString = null;
+            });
+        } else*/
+        if ($scope.searchTypeString != null) {
+            $http.get("/api/userartwork/searchByType/" + $scope.searchTypeString)
+            .success(function (response) {
+                $scope.artwork = response;
+                $scope.searchTypeString = null;
+            });
+        } else
+            if ($scope.searchNameString != null) {
+                $http.get("/api/userartwork/searchByName/" + $scope.searchNameString)
+                .success(function (response) {
+                    $scope.artwork = response;
+                    $scope.searchNameString = null;
+            });
+        }
     };
 });

@@ -34,6 +34,10 @@ app.controller("NavController", function ($scope, LoginService, $location, $moda
 
 app.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
+        when('/', {
+            templateUrl: 'partials/home.html',
+            controller: 'HomeController'
+        }).
         when('/home', {
             templateUrl: 'partials/home.html',
             controller: 'HomeController'
@@ -49,6 +53,14 @@ app.config(['$routeProvider', function ($routeProvider) {
         when('/artwork/:username', {
             templateUrl: 'partials/artwork.html',
             controller: 'ArtworkController'
+        }).
+        when('/favartwork/:username', {
+            templateUrl: 'partials/favartwork.html',
+            controller: 'FavArtworkController'
+        }).
+        when('/allprofiles/:username', {
+            templateUrl: 'partials/allprofiles.html',
+            controller: 'AllProfilesController'
         }).
         when('/about', {
             templateUrl: 'partials/about.html'
@@ -68,7 +80,8 @@ app.factory("LoginService", function ($http) {
             email: email,
             firstName: firstName,
             lastName: lastName,
-            photo: photo
+            photo: photo,
+            followers : []
         };
         $http.post("/api/signup", user)
         .success(function (response) {
@@ -100,11 +113,13 @@ app.factory("LoginService", function ($http) {
         currentUser.email = email;
         currentUser.firstName = firstName;
         currentUser.lastName = lastName;
-
-        $http.post("/api/updateprofile", currentUser)
-        .success(function (response) {
-            currentUser = response;
-        });
+        $http.put("/api/user/" + currentUser._id, currentUser)
+            .success(function (response) {
+                $http.get("/api/user/" + currentUser._id)
+                .success(function (response) {
+                    currentUser = response;
+                });
+            });
     }
 
     var getCurrentUser = function () {

@@ -7,12 +7,11 @@
                     <h2 style="text-align:center">Create new Artwork</h2>
                 </td>
             </tr>
-
         </thead>
         <tbody>
             <tr>
                 <td>
-                    Artwork Name: 
+                    Artwork Name:
                     <input ng-model="artworkname" class="form-control" id="artworkname" type="text">
                 </td>
             </tr>
@@ -29,8 +28,7 @@
             </tr>
             <tr>
                 <td>
-                    <textarea class="form-control" ng-model="artworks" rows="15" ng-show="write" id="artworks" placeholder="Enter text"> 
-                    </textarea>
+                    <textarea class="form-control" ng-model="artworks" rows="15" ng-show="write" id="artworks" placeholder="Enter text"></textarea>
                 </td>
             </tr>
             <tr>
@@ -45,8 +43,8 @@
 
             <tr>
                 <td>
-                    <button ng-click="add()" class="btn btn-success pull-right">
-                        <span class="glyphicon glyphicon-plus"></span>
+                    <button ng-click="addArtwork()" class="btn btn-success pull-right">
+                        Add Artwork <span class="glyphicon glyphicon-plus"></span>
                     </button>
                     <br /><br />
                 </td>
@@ -58,13 +56,16 @@
     <h3>Artwork info</h3>
 
     <div class="container div-container center-block img-rounded">
+        <div class="container center-block" ng-show="artwork.length == 0">
+            <h4>No artworks found! <br /> Try creating a new one! :D</h4>
+        </div>
         <div class="row" ng-repeat="aw in artwork">
-            <!-- left column -->
-            <div class="col-md-6">
+            <br /><br /><br />
+            <div class="col-md-6 center-block">
                 Artwork name:
                 {{aw.artworkname}}
-                ||
-                 Creator name:
+                <br />
+                Creator name:
                 {{aw.username}}
                 <div class="text-center alert-success">
                     <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar" width="200" height="200">
@@ -74,35 +75,36 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 personal-info">
-                   <div class="form-group col-md-2">
-                        <button class="btn btn-danger pull-right" ng-click="remove(aw._id)">
-                            <span class="glyphicon glyphicon-remove ">
-                            </span>
-                        </button>
-                    </div>
-                       &nbsp;
-                    <div class="form-group col-md-2">
-                        <button class="btn btn-danger pull-right" ng-click="upvote(aw._id)">
-                             Likes : {{aw.upvotes}}
-                        </button>
-                    </div>
-                    <br />
+            <div class="col-md-6">
+                <div class="form-group">
+                    <button class="btn btn-danger pull-right" ng-click="remove(aw._id)">
+                        <span class="glyphicon glyphicon-remove "></span> Remove Artwork
+                    </button>
+                </div>
                 <br />
-                
-
-                <div class="form-control row" ng-repeat="cmt in aw.comments">
+                <div class="form-group">
+                    <button class="btn btn-warning pull-right" ng-click="upvote(aw._id)">
+                        <span class="glyphicon glyphicon-thumbs-up "></span>
+                        Likes : {{aw.likes.length}} <br />
+                    </button>
+                </div>
+                <br />
+                <div class="form-group">
+                    <button class="btn btn-info pull-right" ng-click="showComment($index)">
+                        Show Comments : Comment Count {{aw.comments.length}}
+                    </button>
+                </div>
+                <br />
+                <div class="form-group" ng-show="selectedIndex == $index">
                     Comments:
-                        <div class="form-control row">
-                        Comment by user: {{cmt.username}}  
+                    <div ng-repeat="cmt in selectedArtwork.comments">
+                        {{cmt.text}} - by {{cmt.username}}
                     </div>
-                    <div class="form-control row">
-                        Comment : {{cmt.text}}
-                    </div>
-                    
+                    <input ng-model="comment.text" class="form-control" id="comment.text" type="text">
+                    <button class="btn btn-info pull-right" ng-click="addComments(comment)"> Add Comments</button>
                 </div>
-                <br /><br /><br /><br /><br />
-                </div>
+
+            </div>
+        </div>
     </div>
-</div>
 </div>

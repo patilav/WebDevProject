@@ -2,23 +2,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Artistic Collab - Share your creativity</title>
-    <link rel="stylesheet" href="../bootstrap-3.3.2-dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/001-style.css" />
-    <link rel="stylesheet" href="../css/agency.css.css" />
+    <link rel="stylesheet" href="bootstrap-3.3.2-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/001-style.css" />
+    <link rel="stylesheet" href="css/agency.css" />
     
-    <script src="../Libraries/angular.min.js"></script>
-    <script src="../Libraries/angular-route.min.js"></script>
-    <script src="../Libraries/ui-bootstrap-tpls-0.12.1.min.js"></script>
-    <script src="../Libraries/jquery-1.11.2.js"></script>
-    <script src="../bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
+    <script src="Libraries/angular.min.js"></script>
+    <script src="Libraries/angular-route.min.js"></script>
+    <script src="Libraries/ui-bootstrap-tpls-0.12.1.min.js"></script>
+    <script src="Libraries/jquery-1.11.2.js"></script>
+    <script src="bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
     
-    <script src="../js/main.js"></script>
-    <script src="../js/home.js"></script>
-    <script src="../js/signup.js"></script>
-    <script src="../js/profile.js"></script>
-    <script src="../js/artwork.js"></script>
-    <script src="../js/comment.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/home.js"></script>
+    <script src="js/signup.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/allprofile.js"></script>
+    <script src="js/artwork.js"></script>
+    <script src="js/favartwork.js"></script>
+    <script src="js/artworkfeed.js"></script>
+    <script src="js/comment.js"></script>
 
 </head>
 <body ng-app="ArtisticCollab">
@@ -39,8 +42,9 @@
                         <li class="active"><a href="#home">Home</a></li>
                         <li><a href="#about">About</a></li>
                         <li ng-show="currentUser"><a href="#profile/{{currentUser.username}}">Profile</a></li>
-                        <li ng-show="currentUser"><a href="#comment/{{currentUser.username}}">Comment</a></li>
-                        <li ng-show="currentUser"><a href="#artwork/{{currentUser.username}}">Artwork</a></li>
+                        <li ng-show="currentUser"><a href="#artwork/{{currentUser.username}}">My Artwork</a></li>
+                        <li ng-show="currentUser"><a href="#favartwork/{{currentUser.username}}">Favourite Artworks</a></li>
+                        <li ng-show="currentUser"><a href="#allprofiles/{{currentUser.username}}">Browse Artists</a></li>
                     </ul>
                     <form ng-show="!currentUser" class="navbar-form navbar-right">
                         <div class="form-group">
@@ -59,6 +63,28 @@
             </div>
         </nav>
     </div>
-    <div ng-view></div>
+   <div class="container center-block div-container img-rounded">
+
+        <h1>
+            <a href="#home">
+                <img src="http://fontmeme.com/embed.php?text=Artistic%20Collab&name=Kingthings Willowless.ttf&size=40&style_color=FFFFFF"
+                     alt="Fancy Fonts">
+            </a>
+        </h1>
+
+    </div>
+
+    <div ng-view>
+
+    </div>
+    <div class="container center-block" >
+        <br /><br /><br />
+        Copyright (c) 2015 | Created by Avanti Patil | CS5610 Project | Visitor Total
+
+        <a href="#home" target="_blank">
+            <img src="http://hitwebcounter.com/counter/counter.php?page=6044956&style=0038&nbdigits=5&type=page&initCount=0" title="install tracking codes" alt="install tracking codes" border="0">
+        </a>
+        <br /><br /><br />
+    </div>
 </body>
 </html>

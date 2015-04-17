@@ -1,7 +1,10 @@
 ﻿app.controller("ArtworkController", function ($scope, $routeParams, $http, $sce) {
-    
-    var username = $routeParams.username;
+    $scope.selectedIndex = null;
+    $scope.selectedArtwork = null;
     $scope.write = true;
+    $scope.commentText = null;
+
+    var username = $routeParams.username;
 
     $scope.changetype = function () {
         if ($scope.type == "Image") {
@@ -38,17 +41,21 @@
         alert('The File APIs are not fully supported in this browser.');
     }
 
-    $http.get("/api/myuserartwork/" + username)
-    .success(function (response) {
-        $scope.artwork = response;
-    });
+    populateData();
 
-    $scope.add = function () {
+    function populateData() {
+        $http.get("/api/myuserartwork/" + username)
+        .success(function (response) {
+            $scope.artwork = response;
+        });
+    }
+
+    $scope.addArtwork = function () {
         var obj = null;
         if ($scope.type != 'Image') {
-            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: $scope.artworks, upvotes: 0, comments: [{ username: username, text : "I like this art" } ] };
+            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: $scope.artworks, upvotes: 0, comments: [] };
         } else {
-            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: photo, upvotes: 0, comments: [{ username: username, text: "I like this art" }] };
+            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: photo, upvotes: 0, comments: [] };
         }
         console.log(obj);
         $scope.type = null;
@@ -70,31 +77,54 @@
         });
     };
 
-
-    $scope.remove = function (id) {
-        $http.delete("/api/userartwork/" + id)
-        .success(function (response) {
-            $scope.artwork = response;
-        })
+    $scope.showComment = function (index) {
+        $scope.selectedIndex = null;
+        $scope.selectedArtwork = null;
+        $scope.selectedIndex = index
+        $scope.selectedArtwork = $scope.artwork[index];
+        console.log("$scope.selectedIndex" + $scope.selectedIndex);
+        console.log("$scope.selectedArtwork" + $scope.selectedArtwork);
     }
 
-    $scope.upvote = function (id) {
-        $http.post("/api/userartworklike/" + id)
+    $scope.remove = function (id) {
+        $http.delete("/api/userartwork/"+ id + "/" + username)
+        .success(function (response) {
+                   $scope.artwork = response;
+        });
+    }
+
+    $scope.addComments = function (comment) {
+        if (typeof $scope.selectedArtwork.comments == "undefined") {
+            $scope.selectedArtwork.comments = [];
+        }
+        var newComment = {
+            text: comment.text,
+            username : username
+        }
+        $scope.selectedArtwork.comments.push(newComment);
+        $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)
         .success(function (response) {
             $scope.artwork = response;
-        })
+        });
+    }
+
+    $scope.upvote = function () {
+        if (typeof $scope.selectedArtwork.likes == "undefined") {
+            $scope.selectedArtwork.likes = [];
+        }
+        var newLike = {
+            count: 1,
+            username: username
+        }
+        $scope.selectedArtwork.likes.push(newLike);
+        $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)
+        .success(function (response) {
+            $scope.artwork = response;
+        });
     }
 
     $scope.trustSrc = function (src) {
         return $sce.trustAsResourceUrl(src);
-    }
-
-
-    $scope.showcomments = function (id) {
-        $http.delete("/api/userartwork/" + id + "/comments")
-        .success(function (response) {
-            $scope.artwork = response;
-        })
     }
 
 });

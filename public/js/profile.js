@@ -47,7 +47,7 @@
         var email = $scope.email_edit;
         var firstName = $scope.firstname_edit;
         var lastName = $scope.lastname_edit;
-
+        var username = $scope.username;
         if (password != repassword) {
             $scope.match = true;
             $scope.save = false;

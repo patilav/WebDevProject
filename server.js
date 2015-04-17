@@ -48,10 +48,6 @@ app.get('/content', function (req, res) {
 
 //--------------------Schemas--------------------------------------------------------
 
-var artworkidSchema = new mongoose.Schema({
-    artworkid: String
-});
-
 var userSchema = new mongoose.Schema({
     username: String,
     password: String,
@@ -59,19 +55,22 @@ var userSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     photo: String,
-    myfavartworks: [String]
+    followers : [String],
+    created: { type: Date, default: Date.now }
 }, { collection: 'user' });
-
-var commentSchema = new mongoose.Schema({
-    username: String,
-    text: String
-}, { collection: 'comment' });
-
 
 var artcommentSchema = new mongoose.Schema({
     text: String,
-    username : String
+    username: String,
+    created: {type: Date, default: Date.now}
 });
+
+var artLikeSchema = new mongoose.Schema({
+    count: String,
+    username: String,
+    created: { type: Date, default: Date.now }
+});
+
 
 //step-1 search for that particular user in userSchema {
 //step-2 insert your artwork in artworkSchema
@@ -82,7 +81,7 @@ var artworkSchema = new mongoose.Schema({
     username: String,
     type: String,
     artwork: String,
-    upvotes: String,
+    likes: [artLikeSchema],
     comments: [artcommentSchema],
     created: { type: Date, default: Date.now }
 }, { collection: 'artwork' });
@@ -91,31 +90,14 @@ var artworkSchema = new mongoose.Schema({
 // Creating the Models for the schemas 
 var userModel = mongoose.model("UserModel", userSchema);
 
-var artworkidSchemaModel = mongoose.model("artworkidSchemaModel", artworkidSchema);
-
-var commentModel = mongoose.model("CommentModel", commentSchema);
-
 var artcommentModel = mongoose.model("ArtCommentModel", artcommentSchema);
+
+var artLikeModel = mongoose.model("ArtLikeModel", artLikeSchema);
 
 var artworkModel = mongoose.model("ArtworkModel", artworkSchema);
 
 //-------------------------------------------------------------
-// Sample comment model with user info 
-app.get('/usercomment', function (req, res) {
-    commentModel.find(function (err, data) {
-        res.json(data);
-    });
-});
 
-app.post('/usercomment', function (req, res) {
-    var comment = new commentModel(req.body);
-        comment.save(function () {
-        commentModel.find(function (err, data) {
-            res.json(data);
-        });
-    });
-});
-//-------------------------------------------------------------
 // Sample get and post for user artwork
 app.get('/api/userartwork', function (req, res) {
     artworkModel.find(function (err, data) {
@@ -123,6 +105,7 @@ app.get('/api/userartwork', function (req, res) {
     });
 });
 
+//Create a new artwork
 app.post('/api/userartwork', function (req, res) {
     var artwork = new artworkModel(req.body);
         artwork.save(function () {
@@ -139,14 +122,37 @@ app.get("/api/userartwork/:id", function (req, resp) {
     });
 });
 
-//Find artwork - comments by id  
+//Find artwork by name
+app.get("/api/userartwork/searchByName/:name", function (req, resp) {
+    artworkModel.find({ artworkname: req.params.name }, function (err, doc) {
+        resp.json(doc);
+    });
+});
+
+//Find artwork by type
+app.get("/api/userartwork/searchByType/:type", function (req, resp) {
+    artworkModel.find({ type: req.params.type }, function (err, doc) {
+        resp.json(doc);
+    });
+});
+
+//Find artwork by type
+app.get("/api/userartwork/search", function (req, resp) {
+    console.log("This is search name" + req.params.searchNameString);
+    console.log("This is search type" + req.params.searchTypeString);
+    artworkModel.find({ artworkname: req.params.searchNameString, type: req.params.searchTypeString }, function (err, doc) {
+        resp.json(doc);
+    });
+});
+
+//Find artwork - comments by id
 app.get("/api/userartwork/:id/comments", function (req, resp) {
     artworkModel.findById(req.params.id, function (err, doc) {
         resp.json(doc.comments);
     });
 });
 
-//Find myartwork by id using the username 
+//Find myartwork by id using the username
 app.get("/api/myuserartwork/:id", function (req, resp) {
     artworkModel.find({ "username": req.params.id }, function (err, doc) {
         resp.json(doc);
@@ -170,62 +176,56 @@ app.post('/updateprofilewithmyartwork', function (req, res) {
 });
 
 //Delete the artwork by id
-app.delete("/api/userartwork/:id", function (req, resp) {
-    artworkModel.find({ _id: req.body.id , username : req.body.username }, function (err, doc) {
+app.delete("/api/userartwork/:id/:username", function (req, res) {
+    artworkModel.findById(req.params.id, function (err, doc) {
         doc.remove();
-        artworkModel.find(function (err, data) {
-            resp.json(data);
+        artworkModel.find({ "username": req.params.username }, function (err, data) {
+            res.json(data);
         });
     });
 });
 
 //Increase the upvotes by the id 
-app.post('/api/userartworklike/:id', function (req, res) {
+app.post('/api/userartworklike/:id/:username', function (req, res) {
     artworkModel.findById(req.params.id, function (err, data) {
         data.update({ $set: { "upvotes": Number(data.upvotes) + 1 } }, function (err, doc) {
-            artworkModel.find(function (err, data) {
+            artworkModel.find({ "username": req.params.username }, function (err, data) {
                 res.json(data);
             });
         });
     });
 });
 
-// -------------- Single update -----------
-// TBD
-app.post('/updateprofilewithmyartwork', function (req, res) {
-    console.log(req.body.username, req.body.artworkid);
-    userModel.find({ "username": req.body.username }, function (err, data) {
-        //data.myfavartworks.push(req.body.artworkid);
-        console.log(data.myfavartworks);
-        //data.update({ $set: { "myfavartworks": data.myfavartworks } }, function (err, doc) {
-        //    res.json({success: "Inserted Peacefully"});
-        //});
-        //data.save(function (err, data) {
-        //    userModel.find(function (err, data) {
-        //        res.json(data);
-        //    });
-        //});
+app.put('/api/userartwork/:id/:username', function (req, res) {
+    artworkModel.update({ _id: req.params.id }, { $set: req.body }, function (err, doc) {
+        artworkModel.find({ "username": req.params.username }, function (err, data) {
+            res.json(data);
+        });
     });
 });
+
+
+app.put('/api/user/:id', function (req, res) {
+    userModel.update({ _id: req.params.id }, { $set: req.body }, function (err, doc) {
+        userModel.find( function (err, data) {
+            res.json(data);
+        });
+    });
+});
+
 
 //--------------------------------------------------------------------------------
-//Update the user profile by id  
-app.post('/api/updateprofile', function (req, res) {
-    var username = req.body.username;
+// Sample get and post for user artwork
+app.get('/api/user', function (req, res) {
+    userModel.find(function (err, data) {
+        res.json(data);
+    });
+});
+
+// Sample get and post for user artwork
+app.get('/api/user/:id', function (req, res) {
     userModel.findById(req.params.id, function (err, data) {
-        data.username = username;
-        data.password = req.body.password;
-        data.email = req.body.email;
-        data.firstName = req.body.firstName;
-        data.lastName = req.body.lastName;
-        data.photo = req.body.photo;
-        data.myartwork = req.body.myartwork;
-        data.myfavartwork = req.body.myfavartwork;
-        data.save(function (err, data) {
-            userModel.find(function (err, data) {
-                res.json(data);
-            });
-        });
+        res.json(data);
     });
 });
 

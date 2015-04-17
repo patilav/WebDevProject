@@ -1,5 +1,4 @@
 ﻿body {
- 
     background-image: url("../images/bg.jpg");
 }
 
@@ -13,7 +12,6 @@ h3 {
     text-align: center;
 }
 
-
 #text {
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -26,7 +24,7 @@ h3 {
 
 .div-container {
     background-color: #666666; 
-    opacity: 0.80; 
+    opacity: 0.95; 
     display: block;
     color:whitesmoke;
 }
