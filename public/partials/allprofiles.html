@@ -1,0 +1,48 @@
+﻿<div class="container div-container center-block">
+    <h1>All Profiles</h1>
+    <hr>
+    <div class="row" ng-repeat="usr in users">
+        <!-- left column -->
+        <div class="col-md-3">
+            <div class="text-center">
+                <img ng-src="{{usr.photo}}" width="100" height="100" class="avatar img-thumbnail" alt="avatar">
+            </div>
+        </div>
+        <!-- edit form column -->
+        <div class="col-md-9 personal-info">
+            <h3>Personal info</h3>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">First name:</label>
+                    <div class="col-lg-8">
+                        {{usr.firstName}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Last name:</label>
+                    <div class="col-lg-8">
+                        {{usr.lastName}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Email:</label>
+                    <div class="col-lg-8">
+                        {{usr.email}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Username:</label>
+                    <div class="col-md-8">
+                        {{usr.username}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label"></label>
+                    <div class="col-md-8">
+                        <input class="btn btn-primary" value="Follow" ng-click="followUser($index)" type="button">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

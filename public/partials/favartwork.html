@@ -1,0 +1,49 @@
+﻿<h1>Artworks:</h1>
+    <h3>My Favourite Artworks info</h3>
+
+    <div class="container div-container center-block img-rounded">
+        <div class="container center-block" ng-show="artwork.length == 0">
+            <h4>No artworks found! <br /> Try adding some artworks to Favourites</h4>
+        </div>
+        <div class="row" ng-repeat="aw in artwork">
+            <div class="row" ng-show="getLikeableArtwork(aw.likes)">
+                <div class="col-md-6 center-block">
+                    Artwork name:
+                    {{aw.artworkname}}
+                    <br />
+                    Creator name:
+                    {{aw.username}}
+                    <div class="text-center alert-success">
+                        <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar" width="200" height="200">
+                        <span ng-hide="aw.type == 'Image'">{{aw.artwork}}</span>
+                        <div ng-show="aw.type == 'Video link'">
+                            <iframe width="300" height="300" ng-src="{{trustSrc(aw.artwork)}}"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <button class="btn btn-warning pull-right" ng-click="upvote(aw._id)">
+                            <span class="glyphicon glyphicon-thumbs-up "></span>
+                            Likes : {{aw.likes.length}} <br />
+                        </button>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <button class="btn btn-info pull-right" ng-click="showComment($index)">
+                            Show Comments : Comment Count {{aw.comments.length}}
+                        </button>
+                    </div>
+                    <br />
+                    <div class="form-group" ng-show="selectedIndex == $index">
+                        Comments:
+                        <div ng-repeat="cmt in selectedArtwork.comments">
+                            {{cmt.text}} - by {{cmt.username}}
+                        </div>
+                        <input ng-model="comment.text" class="form-control" id="comment.text" type="text">
+                        <button class="btn btn-info pull-right" ng-click="addComments(comment)"> Add Comments</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
