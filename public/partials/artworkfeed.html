@@ -1,0 +1,59 @@
+﻿<h1>Artwork Feed:</h1>
+    <div class="container div-container center-block img-rounded">
+        <div class="container center-block" ng-show="artwork.length == 0">
+            <h4>No artworks found! <br /> Try creating a new one! :D</h4>
+        </div>
+        <div class="alert alert-info alert-dismissable" ng-show="likesucess">
+            {{likedmsg}}
+        </div>
+        <div class="alert alert-info alert-dismissable" ng-show="error">
+            {{errormsg}}
+        </div>
+
+        <div class="row div-artworkContainer" ng-repeat="aw in artwork">
+            <br /><br /><br />
+            <div class="col-md-6 center-block" ng-show="showFeed(aw.username)">
+                Artwork name:
+                {{aw.artworkname}}
+                <br />
+                Creator name:
+                {{aw.username}}
+                <div class="text-center alert-success">
+                    <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar" width="200" height="200">
+                    <span ng-hide="aw.type == 'Image'">{{aw.artwork}}</span>
+                    <div ng-show="aw.type == 'Video link'">
+                        <iframe width="300" height="300" ng-src="{{trustSrc(aw.artwork)}}"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 center-block" ng-show="showFeed(aw.username)">
+                <div class="form-group">
+                    <button class="btn btn-warning pull-right" ng-click="like($index)" ng-hide="alreadyLiked($index)">
+                        Likes : {{aw.likes.length}} <span class="glyphicon glyphicon-thumbs-up "></span>
+                    </button>
+                    <button class="btn btn-warning pull-right" ng-click="unlike($index)" ng-show="alreadyLiked($index)">
+                        Unike <span class="glyphicon glyphicon-thumbs-down"></span>
+                    </button>
+                </div>
+                <br />
+                <div class="form-group">
+                    <button class="btn btn-info pull-right" ng-click="showComment($index)">
+                        Comments : {{aw.comments.length}}
+                    </button>
+                </div>
+                <br />
+                <div class="form-group" ng-show="showcmt && (selectedIndex == $index)">
+                    Comments:
+                    <div ng-show="selectedArtwork.comments.length == 0">
+                        No Comments yet!
+                    </div>
+                    <div ng-repeat="cmt in selectedArtwork.comments">
+                        {{cmt.text}} - by {{cmt.username}}
+                    </div>
+                    <input ng-model="comment.text" class="form-control" id="comment.text" type="text">
+                    <button class="btn btn-info pull-right" ng-click="addComments(comment)"> Add Comments</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
