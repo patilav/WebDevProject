@@ -3,6 +3,8 @@
     $scope.selectedArtwork = null;
     $scope.write = true;
     $scope.commentText = null;
+    $scope.liked = false;
+    $scope.showcmt = false;
 
     var username = $routeParams.username;
 
@@ -53,9 +55,9 @@
     $scope.addArtwork = function () {
         var obj = null;
         if ($scope.type != 'Image') {
-            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: $scope.artworks, upvotes: 0, comments: [] };
+            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: $scope.artworks, likes: [], comments: [] };
         } else {
-            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: photo, upvotes: 0, comments: [] };
+            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: photo, likes: [], comments: [] };
         }
         console.log(obj);
         $scope.type = null;
@@ -77,13 +79,18 @@
         });
     };
 
-    $scope.showComment = function (index) {
+    function selectartwork(index) {
         $scope.selectedIndex = null;
         $scope.selectedArtwork = null;
         $scope.selectedIndex = index
         $scope.selectedArtwork = $scope.artwork[index];
         console.log("$scope.selectedIndex" + $scope.selectedIndex);
         console.log("$scope.selectedArtwork" + $scope.selectedArtwork);
+    }
+
+    $scope.showComment = function (index) {
+        selectartwork(index);
+        $scope.showcmt = true;
     }
 
     $scope.remove = function (id) {
@@ -108,7 +115,17 @@
         });
     }
 
-    $scope.upvote = function () {
+    function getPreviousLikeIndex(likes, uname) {
+        for (i = 0 ; i < likes.length ; i++) {
+            if (likes[i].username == uname) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    $scope.like = function (index) {
+        selectartwork(index);
         if (typeof $scope.selectedArtwork.likes == "undefined") {
             $scope.selectedArtwork.likes = [];
         }
@@ -116,11 +133,57 @@
             count: 1,
             username: username
         }
-        $scope.selectedArtwork.likes.push(newLike);
-        $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)
-        .success(function (response) {
-            $scope.artwork = response;
-        });
+        var oldIndex = getPreviousLikeIndex($scope.selectedArtwork.likes, username);
+        console.log("oldIndex : " + oldIndex);
+        if (oldIndex != -1) {
+            $scope.error = true;
+            $scope.errormsg = "Error in liking one of the artworks";
+        } else {
+            $scope.selectedArtwork.likes.push(newLike);
+            $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)
+            .success(function (response) {
+                $scope.artwork = response;
+                $scope.likesucess = true;
+                $scope.likesucessmsg = "Liked artwork!";
+            });
+        }
+    }
+
+    $scope.alreadyLiked = function (index) {
+        if (typeof $scope.artwork[index].likes == "undefined") {
+            return false;
+        }
+        var oldIndex = getPreviousLikeIndex($scope.artwork[index].likes, username);
+        if (oldIndex == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    $scope.unlike = function (index) {
+        selectartwork(index);
+        if (typeof $scope.selectedArtwork.likes == "undefined") {
+            $scope.selectedArtwork.likes = [];
+        }
+        var newLike = {
+            count: 1,
+            username: username
+        }
+        var oldIndex = getPreviousLikeIndex($scope.selectedArtwork.likes, username);
+        console.log("oldIndex : " + oldIndex);
+        if (oldIndex != -1) {
+            $scope.selectedArtwork.likes.splice(oldIndex,1);
+            $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)
+            .success(function (response) {
+                $scope.artwork = response;
+                $scope.likesucess = true;
+                $scope.likesucessmsg = "Unliked artwork!";
+            });
+        } else {
+            $scope.error = true;
+            $scope.errormsg = "Error in Unliking one of the artworks";
+        }
     }
 
     $scope.trustSrc = function (src) {

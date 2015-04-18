@@ -29,3 +29,11 @@ h3 {
     color:whitesmoke;
 }
 
+.div-artworkContainer {
+    background-color: #666666; 
+    opacity: 0.95; 
+    display: block;
+    color:whitesmoke;
+    text-align: center;
+}
+

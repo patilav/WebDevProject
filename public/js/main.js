@@ -62,6 +62,14 @@ app.config(['$routeProvider', function ($routeProvider) {
             templateUrl: 'partials/allprofiles.html',
             controller: 'AllProfilesController'
         }).
+        when('/myfollowers/:username', {
+            templateUrl: 'partials/myfollowers.html',
+            controller: 'MyFollowersController'
+        }).
+        when('/artworkfeed/:username', {
+            templateUrl: 'partials/artworkfeed.html',
+            controller: 'ArtworkFeedController'
+        }).
         when('/about', {
             templateUrl: 'partials/about.html'
         }).

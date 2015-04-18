@@ -59,7 +59,14 @@
         <div class="container center-block" ng-show="artwork.length == 0">
             <h4>No artworks found! <br /> Try creating a new one! :D</h4>
         </div>
-        <div class="row" ng-repeat="aw in artwork">
+        <div class="alert alert-info alert-dismissable" ng-show="likesucess">
+            {{likedmsg}}
+        </div>
+        <div class="alert alert-info alert-dismissable" ng-show="error">
+            {{errormsg}}
+        </div>
+
+        <div class="row div-artworkContainer" ng-repeat="aw in artwork">
             <br /><br /><br />
             <div class="col-md-6 center-block">
                 Artwork name:
@@ -83,20 +90,27 @@
                 </div>
                 <br />
                 <div class="form-group">
-                    <button class="btn btn-warning pull-right" ng-click="upvote(aw._id)">
-                        <span class="glyphicon glyphicon-thumbs-up "></span>
-                        Likes : {{aw.likes.length}} <br />
+                    
+                    <button class="btn btn-warning pull-right" ng-click="like($index)" ng-hide="alreadyLiked($index)">
+                        Likes : {{aw.likes.length}} <span class="glyphicon glyphicon-thumbs-up "></span>
                     </button>
+                    <button class="btn btn-warning pull-right" ng-click="unlike($index)" ng-show="alreadyLiked($index)">
+                        Unike <span class="glyphicon glyphicon-thumbs-down"></span>
+                    </button>
+
                 </div>
                 <br />
                 <div class="form-group">
                     <button class="btn btn-info pull-right" ng-click="showComment($index)">
-                        Show Comments : Comment Count {{aw.comments.length}}
+                        Comments : {{aw.comments.length}}
                     </button>
                 </div>
                 <br />
-                <div class="form-group" ng-show="selectedIndex == $index">
+                <div class="form-group" ng-show="showcmt && (selectedIndex == $index)">
                     Comments:
+                    <div ng-show="selectedArtwork.comments.length == 0">
+                        No Comments yet!
+                    </div>
                     <div ng-repeat="cmt in selectedArtwork.comments">
                         {{cmt.text}} - by {{cmt.username}}
                     </div>

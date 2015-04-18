@@ -22,6 +22,8 @@
     <script src="js/favartwork.js"></script>
     <script src="js/artworkfeed.js"></script>
     <script src="js/comment.js"></script>
+    <script src="js/myfollowers.js"></script>
+    <script src="js/artworkfeed.js"></script>
 
 </head>
 <body ng-app="ArtisticCollab">
@@ -45,6 +47,8 @@
                         <li ng-show="currentUser"><a href="#artwork/{{currentUser.username}}">My Artwork</a></li>
                         <li ng-show="currentUser"><a href="#favartwork/{{currentUser.username}}">Favourite Artworks</a></li>
                         <li ng-show="currentUser"><a href="#allprofiles/{{currentUser.username}}">Browse Artists</a></li>
+                        <li ng-show="currentUser"><a href="#myfollowers/{{currentUser.username}}">My followers</a></li>
+                        <li ng-show="currentUser"><a href="#artworkfeed/{{currentUser.username}}">Artwork feed</a></li>
                     </ul>
                     <form ng-show="!currentUser" class="navbar-form navbar-right">
                         <div class="form-group">
