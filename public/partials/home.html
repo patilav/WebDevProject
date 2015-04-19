@@ -1,70 +1,75 @@
 ﻿
-<div class="container center-block">
-    <div style="height: 550px">
-        <carousel interval="myInterval">
-            <slide ng-repeat="slide in slides" active="slide.active">
-                <img ng-src="{{slide.image}}" style="margin:auto; width:1000px ; height: 500px">
-                <div class="carousel-caption">
-                    <h4>{{slide.text}}</h4>
-                    <p>Create . Comment . Like</p>
-                </div>
-            </slide>
-        </carousel>
-    </div>
-    <h3>Artwork info</h3>
-    <div class="form-group">
-        <div class="col-md-3">
-            <input ng-model="searchNameString" class="form-control" type="text" placeholder="Search for artwork by name"> 
-        </div>
-        <div class="col-md-3">
-            <select class="form-control" ng-model="searchTypeString" id="searchTypeString">
-                <option class="active">Writing</option>
-                <option>Video link</option>
-                <option>Music Link</option>
-                <option>Image</option>
-            </select>
-        </div>
-        <div class="col-md-6">
-            <button class="btn btn-primary form-control" ng-click="search()">Search</button> 
-        </div>
-    </div>
-    <br /><br />
 
-    <div class="container div-container center-block img-rounded">
-        <div class="container" ng-show="artwork.count == 0">
-            No artwork to display
-        </div>
-
-        <div class="row" ng-repeat="aw in artwork">
-
-                <!-- left column -->
-            <div class="col-md-6">
-                Artwork:
-                {{aw.artworkname}}
-                Creator by:
-                {{aw.username}}
-                <div class="text-center alert-success">
-                    <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar" width="200" height="200">
-                    <span ng-hide="aw.type == 'Image'">{{aw.artwork}}</span>
-                    <div ng-show="aw.type == 'Video link'">
-                        <iframe width="300" height="300" ng-src="{{trustSrc(aw.artwork)}}"></iframe>
-                    </div>
-                </div>
+<div style="height: 500px">
+    <carousel interval="myInterval">
+        <slide ng-repeat="slide in slides" active="slide.active">
+            <img ng-src="{{slide.image}}" style="margin:auto; width:1000px ; height: 500px">
+            <div class="carousel-caption img-circle">
+                <h4>{{slide.text}}</h4>
+                <p>Create . Comment . Like</p>
             </div>
-            <div class="col-md-6 personal-info">
-                &nbsp;
-                <div class="form-group col-md-2">
-                    <button class="btn btn-danger pull-right" ng-click="upvote(aw._id)">
-                        Likes : {{aw.upvotes}}
+        </slide>
+    </carousel>
+</div>
+<h3>Explore Artworks</h3>
+<div class="form-group">
+    <div class="col-md-3">
+        <input ng-model="searchNameString" class="form-control" type="text" placeholder="Search for artwork by name">
+    </div>
+    <div class="col-md-3">
+        <select class="form-control" ng-model="searchTypeString" id="searchTypeString">
+            <option class="active">Writing</option>
+            <option>Video link</option>
+            <option>Music Link</option>
+            <option>Image</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <button class="btn btn-primary form-control" ng-click="search()">Search</button>
+    </div>
+</div>
+<br /><br />
+
+<div class="container" ng-show="artwork.count == 0">
+    No artwork to display
+</div>
+
+<div class="row" ng-repeat="aw in artwork">
+    <hr />
+    <div class="col-lg-12 center-block">
+        <h4> Artwork name: {{aw.artworkname}} </h4>
+        <div class="text-center">
+            <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar img-thumbnail">
+            <span ng-show="aw.type == 'Writing'" class="div-artworkContainer img-rounded">{{aw.artwork}}</span>
+            <div ng-show="aw.type == 'Video link'">
+                <iframe width="800" height="500" ng-src="{{trustSrc(aw.artwork)}}"></iframe>
+            </div>
+        </div>
+
+        <div class="col-md-12 center-block">
+            <h4>Posted by: {{aw.username}} </h4>
+            <div class="form-group">
+                <div class="col-md-2 col-lg-offset-3">
+                    <button class="btn btn-warning" >
+                        Likes : {{aw.likes.length}} <span class="glyphicon glyphicon-thumbs-up "></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-info" ng-click="showComment($index)">
+                        Comments : {{aw.comments.length}}
                     </button>
                 </div>
                 <br />
-                <br />
-                <div ng-repeat="cmt in aw.comments">
-                    "{{cmt.text}}" - Comment by: {{cmt.username}}
+                <div class="form-group col-lg-offset-3 col-lg-6" ng-show="showcmt && (selectedIndex == $index)">
+                    <h4>Comments:</h4>
+                    <div ng-show="selectedArtwork.comments.length == 0">
+                        No Comments yet!
+                    </div>
+                    <div ng-repeat="cmt in selectedArtwork.comments">
+                        {{cmt.text}} - by {{cmt.username}}
+                    </div>
                 </div>
-                <br /><br /><br />
             </div>
         </div>
-        <br /><br />
     </div>
+</div>

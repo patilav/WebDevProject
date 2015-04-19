@@ -1,13 +1,13 @@
 ﻿body {
     background-image: url("../images/bg.jpg");
+   padding-top: 100px;
 }
 
-h1 {
-    color: white;
-    text-align: center;
+.carousel-caption{
+     color: white;
 }
 
-h3 {
+h1,h2,h3,h4 {
     color: white;
     text-align: center;
 }
@@ -22,6 +22,10 @@ h3 {
     font-size: large;
 }
 
+.container{
+    color:whitesmoke;
+}
+
 .div-container {
     background-color: #666666; 
     opacity: 0.95; 
@@ -30,10 +34,10 @@ h3 {
 }
 
 .div-artworkContainer {
-    background-color: #666666; 
-    opacity: 0.95; 
+    background-color: lightgoldenrodyellow; 
+    padding: 20px;
     display: block;
-    color:whitesmoke;
+    color:black;
     text-align: center;
 }
 

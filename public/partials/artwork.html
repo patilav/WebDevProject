@@ -1,113 +1,102 @@
-﻿<h1>Artworks:</h1>
-<div class="container center-block">
-    <table class="table table-striped alert-success">
-        <thead>
-            <tr>
-                <td colspan="4">
-                    <h2 style="text-align:center">Create new Artwork</h2>
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    Artwork Name:
-                    <input ng-model="artworkname" class="form-control" id="artworkname" type="text">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Type of artwork : <br />
-                    <select class="form-control" ng-model="type" id="type" ng-change="changetype()">
-                        <option class="active">Writing</option>
-                        <option>Video link</option>
-                        <option>Music Link</option>
-                        <option>Image</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <textarea class="form-control" ng-model="artworks" rows="15" ng-show="write" id="artworks" placeholder="Enter text"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <span ng-hide="write">
-                        <img ng-src="{{loc}}" width="100" height="100" class="avatar img-thumbnail" alt="avatar">
-                        <h6>Upload photo...</h6>
-                        <input ng-model="photo" class="form-control" id="filePicker" type="file">
-                    </span>
-                </td>
-            </tr>
+﻿<h2>Create new Artwork</h2>
+<hr />
+<table class="table table-striped alert-success">
+    <tr>
+        <td>
+            Artwork Name:
+            <input ng-model="artworkname" class="form-control" id="artworkname" type="text">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Type of artwork : <br />
+            <select class="form-control" ng-model="type" id="type" ng-change="changetype()">
+                <option class="active">Writing</option>
+                <option>Video link</option>
+                <option>Music Link</option>
+                <option>Image</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <textarea class="form-control" ng-model="artworks" rows="15" ng-show="write" id="artworks" placeholder="Enter text"></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span ng-hide="write">
+                <img ng-src="{{loc}}" width="100" height="100" class="avatar img-thumbnail" alt="avatar">
+                <h5>Upload photo...</h5>
+                <input ng-model="photo" class="form-control" id="filePicker" type="file">
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button ng-click="addArtwork()" class="btn btn-success pull-right">
+                Add Artwork <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <br /><br />
+        </td>
+    </tr>
+</table>
 
-            <tr>
-                <td>
-                    <button ng-click="addArtwork()" class="btn btn-success pull-right">
-                        Add Artwork <span class="glyphicon glyphicon-plus"></span>
-                    </button>
-                    <br /><br />
-                </td>
-            </tr>
 
-        </tbody>
+<!--
+    ------------------
 
-    </table>
-    <h3>Artwork info</h3>
+    -->
 
-    <div class="container div-container center-block img-rounded">
-        <div class="container center-block" ng-show="artwork.length == 0">
-            <h4>No artworks found! <br /> Try creating a new one! :D</h4>
-        </div>
-        <div class="alert alert-info alert-dismissable" ng-show="likesucess">
-            {{likedmsg}}
-        </div>
-        <div class="alert alert-info alert-dismissable" ng-show="error">
-            {{errormsg}}
-        </div>
+<hr />
+<h3>My Artworks</h3>
 
-        <div class="row div-artworkContainer" ng-repeat="aw in artwork">
-            <br /><br /><br />
-            <div class="col-md-6 center-block">
-                Artwork name:
-                {{aw.artworkname}}
-                <br />
-                Creator name:
-                {{aw.username}}
-                <div class="text-center alert-success">
-                    <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar" width="200" height="200">
-                    <span ng-hide="aw.type == 'Image'">{{aw.artwork}}</span>
-                    <div ng-show="aw.type == 'Video link'">
-                        <iframe width="300" height="300" ng-src="{{trustSrc(aw.artwork)}}"></iframe>
-                    </div>
-                </div>
+<div class="container center-block" ng-show="artwork.length == 0">
+    <h4>No artworks found! <br /> Try creating a new one! :D</h4>
+</div>
+<div class="alert alert-info alert-dismissable" ng-show="likesucess">
+    {{likedmsg}}
+</div>
+<div class="alert alert-info alert-dismissable" ng-show="error">
+    {{errormsg}}
+</div>
+<div class="row " ng-repeat="aw in artwork">
+    <hr />
+    <div class="col-lg-12 center-block">
+        <h4> Artwork name: {{aw.artworkname}} </h4>
+
+        <div class="text-center">
+            <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar img-thumbnail">
+            <span ng-show="aw.type == 'Writing'" class="div-artworkContainer img-rounded">{{aw.artwork}}</span>
+            <div ng-show="aw.type == 'Video link'">
+                <iframe width="800" height="500" ng-src="{{trustSrc(aw.artwork)}}"></iframe>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <button class="btn btn-danger pull-right" ng-click="remove(aw._id)">
+        </div>
+
+        <div class="col-md-12 center-block">
+            <h4>Posted by: {{aw.username}} </h4>
+            <div class="form-group">
+                <div class="col-md-2 col-lg-offset-3">
+                    <button class="btn btn-warning" ng-click="like($index)" ng-hide="alreadyLiked($index)">
+                        Likes : {{aw.likes.length}} <span class="glyphicon glyphicon-thumbs-up "></span>
+                    </button>
+                    <button class="btn btn-warning" ng-click="unlike($index)" ng-show="alreadyLiked($index)">
+                        Unike <span class="glyphicon glyphicon-thumbs-down"></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-info" ng-click="showComment($index)">
+                        Comments : {{aw.comments.length}}
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-danger" ng-click="remove(aw._id)">
                         <span class="glyphicon glyphicon-remove "></span> Remove Artwork
                     </button>
                 </div>
                 <br />
-                <div class="form-group">
-                    
-                    <button class="btn btn-warning pull-right" ng-click="like($index)" ng-hide="alreadyLiked($index)">
-                        Likes : {{aw.likes.length}} <span class="glyphicon glyphicon-thumbs-up "></span>
-                    </button>
-                    <button class="btn btn-warning pull-right" ng-click="unlike($index)" ng-show="alreadyLiked($index)">
-                        Unike <span class="glyphicon glyphicon-thumbs-down"></span>
-                    </button>
-
-                </div>
-                <br />
-                <div class="form-group">
-                    <button class="btn btn-info pull-right" ng-click="showComment($index)">
-                        Comments : {{aw.comments.length}}
-                    </button>
-                </div>
-                <br />
-                <div class="form-group" ng-show="showcmt && (selectedIndex == $index)">
-                    Comments:
+                <div class="form-group col-lg-offset-3 col-lg-6" ng-show="showcmt && (selectedIndex == $index)">
+                    <h4>Comments:</h4>
                     <div ng-show="selectedArtwork.comments.length == 0">
                         No Comments yet!
                     </div>
