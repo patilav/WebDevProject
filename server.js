@@ -18,13 +18,13 @@ var app = express();
 app.use(bodyParser.json());
 
 // for parsing application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // for parsing multipart/form-data
-app.use(multer()); 
+app.use(multer());
 
 //max limit to save images
-app.use(express.bodyParser({ limit: '50mb' })); 
+app.use(express.bodyParser({ limit: '50mb' }));
 
 //mongodb connection string for the remote database on openshift database 
 var connectionString = process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/cs5610project';
@@ -55,14 +55,14 @@ var userSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     photo: String,
-    followers : [String],
+    followers: [String],
     created: { type: Date, default: Date.now }
 }, { collection: 'user' });
 
 var artcommentSchema = new mongoose.Schema({
     text: String,
     username: String,
-    created: {type: Date, default: Date.now}
+    created: { type: Date, default: Date.now }
 });
 
 var artLikeSchema = new mongoose.Schema({
@@ -108,9 +108,10 @@ app.get('/api/userartwork', function (req, res) {
 //Create a new artwork
 app.post('/api/userartwork', function (req, res) {
     var artwork = new artworkModel(req.body);
-        artwork.save(function () {
+    artwork.save(function () {
         artworkModel.find({ "username": req.body.username }, function (err, data) {
             res.json(data);
+
         });
     });
 });
@@ -196,22 +197,61 @@ app.post('/api/userartworklike/:id/:username', function (req, res) {
     });
 });
 
+//app.put('/api/userartwork/:id/:username', function (req, res) {
+//    artworkModel.update({ _id: req.params.id }, { $set: req.body }, function (err, doc) {
+//        artworkModel.find({ "username": req.params.username }, function (err, data) {
+//            res.json(data);
+//        });
+//    });
+//});
+
 app.put('/api/userartwork/:id/:username', function (req, res) {
-    artworkModel.update({ _id: req.params.id }, { $set: req.body }, function (err, doc) {
-        artworkModel.find({ "username": req.params.username }, function (err, data) {
-            res.json(data);
+    //console.log(req.body);
+    var givendata = req.body;
+    artworkModel.findById(req.params.id, function (req, data) {
+        //console.log(givendata);
+        data.username = givendata.username;
+        data.type = givendata.type;
+        data.artwork = givendata.artwork;
+        data.likes = givendata.likes;
+        data.comments = givendata.comments;
+        data.created = givendata.created;
+        data.save(function (err, data) {
+            artworkModel.find({ "username": req.params.username }, function (err, data) {
+                res.json(data);
+            });
         });
     });
 });
-
 
 app.put('/api/user/:id', function (req, res) {
-    userModel.update({ _id: req.params.id }, { $set: req.body }, function (err, doc) {
-        userModel.find( function (err, data) {
-            res.json(data);
+    //console.log(req.body);
+    var givendata = req.body;
+    userModel.findById(req.params.id, function (req, data) {
+        //console.log(givendata);
+        data.username = givendata.username;
+        data.password = givendata.password;
+        data.email = givendata.email;
+        data.firstName = givendata.firstName;
+        data.lastName = givendata.lastName;
+        data.photo = givendata.photo;
+        data.followers = givendata.followers;
+        data.created = givendata.created;
+        data.save(function (err, data) {
+            userModel.find(function (err, data) {
+                res.json(data);
+            });
         });
     });
 });
+
+//app.put('/api/user/:id', function (req, res) {
+//    userModel.update({ _id: req.params.id }, { $set: req.body }, function (err, doc) {
+//        userModel.find( function (err, data) {
+//            res.json(data);
+//        });
+//    });
+//});
 
 
 //--------------------------------------------------------------------------------
