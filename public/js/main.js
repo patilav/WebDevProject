@@ -28,7 +28,7 @@ app.controller("NavController", function ($scope, LoginService, $location, $moda
         $scope.user.password = null;
         var res = LoginService.logout();
         $scope.currentUser = null;
-        $location.path('partials/home.html');
+        $location.path('/home');
     }
 });
 
