@@ -5,6 +5,7 @@
     $scope.commentText = null;
     $scope.liked = false;
     $scope.showcmt = false;
+    $scope.fail = false;
 
     var username = $routeParams.username;
 
@@ -53,30 +54,45 @@
     }
 
     $scope.addArtwork = function () {
-        var obj = null;
-        if ($scope.type != 'Image') {
-            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: $scope.artworks, likes: [], comments: [] };
+        var artname = $scope.artworkname;
+        var arttype = $scope.type;
+        var photoimage = $scope.photo;
+        var writtenart = $scope.artworks;
+        if (artname == null || artname == "") {
+            $scope.fail = true;
+            $scope.fail_msg = "Enter art Name";
+        } else if (arttype == null || arttype == "") {
+            $scope.fail = true;
+            $scope.fail_msg = "Enter art type";
+        } else if ((photo == null || photo == "") && (writtenart == null || writtenart == "")) {
+            $scope.fail = true;
+            $scope.fail_msg = "Enter art work details";
         } else {
-            obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: photo, likes: [], comments: [] };
-        }
-        console.log(obj);
-        $scope.type = null;
-        $scope.artworks = null;
-        $http.post("/api/userartwork", obj)
-        .success(function (response) {
-            console.log(response, "mine");
-            $scope.artwork = response;
-            var objprofile = {
-                username: username,
-                artworkid: $scope.artwork[response.length - 1]._id,
-            };
-
-            $http.post("/api/updateprofilewithmyartwork", objprofile)
+            var obj = null;
+            if ($scope.type != 'Image') {
+                obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: $scope.artworks, likes: [], comments: [] };
+            } else {
+                obj = { artworkname: $scope.artworkname, username: username, type: $scope.type, artwork: photo, likes: [], comments: [] };
+            }
+            console.log(obj);
+            $scope.type = null;
+            $scope.artworks = null;
+            $http.post("/api/userartwork", obj)
             .success(function (response) {
-                console.log(response);
-                //toast notification
+                console.log(response, "mine");
+                $scope.artwork = response;
+                var objprofile = {
+                    username: username,
+                    artworkid: $scope.artwork[response.length - 1]._id,
+                };
+
+                $http.post("/api/updateprofilewithmyartwork", objprofile)
+                .success(function (response) {
+                    console.log(response);
+                    //toast notification
+                });
             });
-        });
+        }
     };
 
     function selectartwork(index) {
