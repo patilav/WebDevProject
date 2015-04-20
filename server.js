@@ -186,6 +186,16 @@ app.delete("/api/userartwork/:id/:username", function (req, res) {
     });
 });
 
+app.delete("/api/user/:id", function (req, res) {
+    userModel.findById(req.params.id, function (err, doc) {
+        doc.remove();
+        userModel.find(function (err, data) {
+            res.json(data);
+        });
+    });
+});
+
+
 //Increase the upvotes by the id 
 app.post('/api/userartworklike/:id/:username', function (req, res) {
     artworkModel.findById(req.params.id, function (err, data) {

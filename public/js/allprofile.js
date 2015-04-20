@@ -17,6 +17,14 @@
         }
     }
 
+    $scope.remove = function (id) {
+        $http.delete("/api/user/" + id)
+        .success(function (response) {
+            $scope.user = response;
+        });
+    }
+
+
     $scope.followUser = function (index) {
         $scope.selectedIndex = null;
         $scope.selectedUser = null;
