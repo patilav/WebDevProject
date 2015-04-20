@@ -217,7 +217,7 @@ app.put('/api/userartwork/:id/:username', function (req, res) {
         data.comments = givendata.comments;
         data.created = givendata.created;
         data.save(function (err, data) {
-            artworkModel.find({ "username": req.params.username }, function (err, data) {
+            artworkModel.find({ "username": givendata.username }, function (err, data) {
                 res.json(data);
             });
         });

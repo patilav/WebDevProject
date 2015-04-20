@@ -3,9 +3,9 @@
     <h4>No artworks found! <br /> Try adding some artworks to Favourites</h4>
 </div>
 <div class="row" ng-repeat="aw in artwork">
-    <div class="row" ng-show="getLikeableArtwork(aw.likes)">
+    <div class="row">
         <hr />
-        <div class="col-lg-12 center-block">
+        <div class="col-lg-12 center-block" ng-show="alreadyLiked($index)">
             <h4> Artwork name: {{aw.artworkname}} </h4>
             <div class="text-center">
                 <img ng-src="{{aw.artwork}}" ng-show="aw.type == 'Image'" class="avatar img-thumbnail">

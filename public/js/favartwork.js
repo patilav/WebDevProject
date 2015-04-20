@@ -14,13 +14,46 @@
         }
     }
 
+    populateData();
+
+    function populateData() {
+        $http.get("/api/userartwork")
+        .success(function (response) {
+            $scope.artwork = response;
+            getfavArtworks($scope.artwork);
+        });
+    }
+
+    function getfavArtworks(artwork) {
+        var j;
+        for (j = 0 ; j < artwork.length; j++) {
+            if (getLikesArt(artwork[j].likes) == -1 || typeof artwork[j].likes.length == 0) {
+                $scope.artwork.splice(j, 1);
+            }
+        }
+
+    }
+
+    function getLikesArt (likes) {
+        var i;
+        for (i = 0; i < likes.length ; i++) {
+            if (likes[i].username == username) {
+                return i;
+            } 
+        }
+        if (i == likes.length) { 
+            return -1;
+        }
+    }
+
+
     $scope.getLikeableArtwork = function (likes) {
         var i;
         for (i = 0; i < likes.length ; i++) {
-            if (i.username  == username) {
-                return false;
-            } else {
+            if (likes[i].username == username) {
                 return true;
+            } else {
+                return false;
             }
         }
     }
@@ -52,14 +85,6 @@
         alert('The File APIs are not fully supported in this browser.');
     }
 
-    populateData();
-
-    function populateData() {
-        $http.get("/api/userartwork")
-        .success(function (response) {
-            $scope.artwork = response;
-        });
-    }
 
     function getUsername() {
         return username;
@@ -96,10 +121,13 @@
 
     function getPreviousLikeIndex(likes, uname) {
         for (i = 0 ; i < likes.length ; i++) {
+            console.log("Likes " + likes[i].username+ " uname "+uname);
             if (likes[i].username == uname) {
+                console.log("Return value vaule: " + i);
                 return i;
             }
         }
+        console.log("Return value vaule: " + -1);
         return -1;
     }
 
@@ -108,12 +136,15 @@
             return false;
         }
         var oldIndex = getPreviousLikeIndex($scope.artwork[index].likes, username);
+
+        console.log("alreadyLiked vaule: " + oldIndex);
         if (oldIndex == -1) {
             return false;
         } else {
             return true;
         }
     }
+
     $scope.like = function (index) {
         selectartwork(index);
         if (typeof $scope.selectedArtwork.likes == "undefined") {
@@ -133,6 +164,7 @@
             $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)
             .success(function (response) {
                 $scope.artwork = response;
+                populateData();
                 $scope.likesucess = true;
                 $scope.likesucessmsg = "Liked artwork!";
             });
@@ -167,6 +199,7 @@
             $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)
             .success(function (response) {
                 $scope.artwork = response;
+                populateData();
                 $scope.likesucess = true;
                 $scope.likesucessmsg = "Unliked artwork!";
             });

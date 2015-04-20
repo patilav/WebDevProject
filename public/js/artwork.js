@@ -125,7 +125,9 @@
     }
 
     $scope.like = function (index) {
+        console.log("In process of liking");
         selectartwork(index);
+
         if (typeof $scope.selectedArtwork.likes == "undefined") {
             $scope.selectedArtwork.likes = [];
         }
@@ -139,6 +141,7 @@
             $scope.error = true;
             $scope.errormsg = "Error in liking one of the artworks";
         } else {
+            console.log(" $scope.selectedArtwork._id"+$scope.selectedArtwork._id);
             $scope.selectedArtwork.likes.push(newLike);
             $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)
             .success(function (response) {
@@ -162,6 +165,7 @@
     }
 
     $scope.unlike = function (index) {
+        console.log("In process of unlike");
         selectartwork(index);
         if (typeof $scope.selectedArtwork.likes == "undefined") {
             $scope.selectedArtwork.likes = [];

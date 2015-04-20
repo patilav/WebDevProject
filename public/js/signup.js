@@ -14,24 +14,23 @@
     };
 
     var handleFileSelect = function (evt) {
+        console.log("start of file select");
         var files = evt.target.files;
         var file = files[0];
-
         if (files && file) {
             var reader = new FileReader();
-
-            reader.onload = function (readerEvt) {
+                reader.onload = function (readerEvt) {
                 var binaryString = readerEvt.target.result;
                 $scope.loc = "data:image/jpeg;base64," + btoa(binaryString);
                 photo = $scope.loc;
             };
-
             reader.readAsBinaryString(file);
         }
+        console.log("end of file select");
     };
 
     if (window.File && window.FileReader && window.FileList && window.Blob) {
-        $('#filePicker').on('change', handleFileSelect);
+        $('filePicker').on('change', handleFileSelect);
     } else {
         alert('The File APIs are not fully supported in this browser.');
     }
