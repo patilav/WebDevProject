@@ -122,6 +122,14 @@
         return -1;
     }
 
+    $scope.remove = function (id) {
+        $http.delete("/api/userartwork/" + id)
+        .success(function (response) {
+            $scope.artwork = response;
+        });
+    }
+
+
     $scope.alreadyLiked = function (index) {
         if (typeof $scope.artwork[index].likes == "undefined") {
             return false;

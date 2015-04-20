@@ -59,6 +59,12 @@
                         Comments : {{aw.comments.length}}
                     </button>
                 </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-danger" ng-click="remove(aw._id)">
+                        Remove
+                    </button>
+                </div>
                 <br />
                 <div class="form-group col-lg-offset-3 col-lg-6" ng-show="showcmt && (selectedIndex == $index)">
                     <h4>Comments:</h4>
