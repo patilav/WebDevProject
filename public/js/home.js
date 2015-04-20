@@ -1,5 +1,10 @@
 ﻿app.controller("HomeController", function ($scope, $routeParams, $http, $sce) {
+
+    //Getting the username from the main function's routeParams
     var username = $routeParams.username;
+
+
+    // Slides for the carousal 
 
     $scope.myInterval = 5000;
     var slides = $scope.slides = [
@@ -21,52 +26,22 @@
         }
         ];
 
-    /* --- code to add the slieds on the fly 
-    $scope.addSlide = function () {
-        var newWidth = 600 + slides.length + 1;
-        slides.push({
-            image: 'http://placekitten.com/' + newWidth + '/300',
-            text: ['Videos', 'Music', 'Paintings', 'Photographs'][slides.length % 4] + ' ' +
-              ['Cats', 'Kittys', 'Felines', 'Cutes'][slides.length % 4]
-        });
-    };
-    
-    for (var i = 0; i < 4; i++) {
-        $scope.addSlide();
-    }
-    */
+    // Load all the requied artworks on the home page 
+
     $http.get("/api/userartwork")
     .success(function (response) {
         $scope.artwork = response;
     });
 
-    //$scope.add = function () {
-    //    var obj = { username: username, type: $scope.type, artwork: $scope.artworks };
-    //    console.log(obj);
-    //    $scope.type = null;
-    //    $scope.artworks = null;
-    //    $http.post("/userartwork", obj)
-    //    .success(function (response) {
-    //        $scope.artwork = response;
-    //    });
-    //};
+    //Used to display the video links securely
 
     $scope.trustSrc = function (src) {
         return $sce.trustAsResourceUrl(src);
     }
 
+   
+    //Function used to search the given search string
     $scope.search = function () {
-        /*if ($scope.searchNameString != null  && $scope.searchTypeString != null) {
-            var obj = { searchNameString: $scope.searchNameString, searchTypeString: $scope.searchTypeString };
-            console.log(obj);
-            $http.get("/api/userartwork/search", obj)
-            .success(function (response) {
-                console.log("this got executed"+ response);
-                $scope.artwork = response;
-                $scope.searchNameString = null;
-                $scope.searchTypeString = null;
-            });
-        } else*/
         if ($scope.searchTypeString != null) {
             $http.get("/api/userartwork/searchByType/" + $scope.searchTypeString)
             .success(function (response) {
@@ -83,21 +58,23 @@
         }
     };
 
-
+    //Function to select the given index
     function selectartwork(index) {
         $scope.selectedIndex = null;
         $scope.selectedArtwork = null;
         $scope.selectedIndex = index
         $scope.selectedArtwork = $scope.artwork[index];
-        console.log("$scope.selectedIndex" + $scope.selectedIndex);
-        console.log("$scope.selectedArtwork" + $scope.selectedArtwork);
+        //console.log("$scope.selectedIndex" + $scope.selectedIndex);
+        //console.log("$scope.selectedArtwork" + $scope.selectedArtwork);
     }
 
+    //Function to show the comments for the given index
     $scope.showComment = function (index) {
         selectartwork(index);
         $scope.showcmt = true;
     }
 
+    //Function to show the comments for the given index
     $scope.addComments = function (comment) {
         if (typeof $scope.selectedArtwork.comments == "undefined") {
             $scope.selectedArtwork.comments = [];
@@ -113,6 +90,7 @@
         });
     }
 
+    //Function to give the index of liked artwork
     function getPreviousLikeIndex(likes, uname) {
         for (i = 0 ; i < likes.length ; i++) {
             if (likes[i].username == uname) {
@@ -122,6 +100,7 @@
         return -1;
     }
 
+    //Function to remove artwork of perticular index
     $scope.remove = function (id) {
         $http.delete("/api/userartwork/" + id)
         .success(function (response) {
@@ -129,7 +108,7 @@
         });
     }
 
-
+    // Function to check if the element has been already liked
     $scope.alreadyLiked = function (index) {
         if (typeof $scope.artwork[index].likes == "undefined") {
             return false;
@@ -141,6 +120,8 @@
             return true;
         }
     }
+
+    // Function to like
     $scope.like = function (index) {
         selectartwork(index);
         if (typeof $scope.selectedArtwork.likes == "undefined") {
@@ -151,7 +132,7 @@
             username: username
         }
         var oldIndex = getPreviousLikeIndex($scope.selectedArtwork.likes, username);
-        console.log("oldIndex : " + oldIndex);
+        //console.log("oldIndex : " + oldIndex);
         if (oldIndex != -1) {
             $scope.error = true;
             $scope.errormsg = "Error in liking one of the artworks";
@@ -166,8 +147,9 @@
         }
     }
 
+    // Function to check if it is already liked
     $scope.alreadyLiked = function (index) {
-        console.log(username);
+        //console.log(username);
         if (username == "undefined") {
             return false;
         }
@@ -183,6 +165,7 @@
         }
     }
 
+    // Function to unlike
     $scope.unlike = function (index) {
         selectartwork(index);
         if (typeof $scope.selectedArtwork.likes == "undefined") {
@@ -193,7 +176,7 @@
             username: username
         }
         var oldIndex = getPreviousLikeIndex($scope.selectedArtwork.likes, username);
-        console.log("oldIndex : " + oldIndex);
+        //console.log("oldIndex : " + oldIndex);
         if (oldIndex != -1) {
             $scope.selectedArtwork.likes.splice(oldIndex, 1);
             $http.put("/api/userartwork/" + $scope.selectedArtwork._id + "/" + username, $scope.selectedArtwork)

@@ -1,6 +1,4 @@
-﻿
-
-<div style="height: 500px">
+﻿<div style="height: 500px">
     <carousel interval="myInterval">
         <slide ng-repeat="slide in slides" active="slide.active">
             <img ng-src="{{slide.image}}" style="margin:auto; width:1000px ; height: 500px">
@@ -20,7 +18,6 @@
         <select class="form-control" ng-model="searchTypeString" id="searchTypeString">
             <option class="active">Writing</option>
             <option>Video link</option>
-            <option>Music Link</option>
             <option>Image</option>
         </select>
     </div>
@@ -49,20 +46,22 @@
         <div class="col-md-12 center-block">
             <h4>Posted by: {{aw.username}} </h4>
             <div class="form-group">
-                <div class="col-md-2 col-lg-offset-3">
-                    <button class="btn btn-warning" >
-                        Likes : {{aw.likes.length}} <span class="glyphicon glyphicon-thumbs-up "></span>
+                <div class="col-md-2">
+                    <button class="btn btn-info">
+                        Likes : {{aw.likes.length}}
+                    </button>
+                </div>
+                <div class="col-md-2 col-lg-offset-3" ng-show="loggedin">
+                    <button class="btn btn-warning" ng-click="like($index)" ng-hide="alreadyLiked($index)">
+                        Like <span class="glyphicon glyphicon-thumbs-up "></span>
+                    </button>
+                    <button class="btn btn-warning" ng-click="unlike($index)" ng-show="alreadyLiked($index)">
+                        Unike <span class="glyphicon glyphicon-thumbs-down"></span>
                     </button>
                 </div>
                 <div class="col-md-2">
                     <button class="btn btn-info" ng-click="showComment($index)">
                         Comments : {{aw.comments.length}}
-                    </button>
-                </div>
-
-                <div class="col-md-2">
-                    <button class="btn btn-danger" ng-click="remove(aw._id)">
-                        Remove
                     </button>
                 </div>
                 <br />
@@ -74,6 +73,8 @@
                     <div ng-repeat="cmt in selectedArtwork.comments">
                         {{cmt.text}} - by {{cmt.username}}
                     </div>
+                    <input ng-model="comment.text" class="form-control" id="comment.text" type="text" ng-show="loggedin">
+                    <button class="btn btn-info pull-right" ng-click="addComments(comment)" ng-show="loggedin">Add Comments</button>
                 </div>
             </div>
         </div>
