@@ -1,8 +1,10 @@
 ﻿app.controller("SignupController", function ($scope, $modalInstance, LoginService, $http) {
+    
     $scope.loc = "//placehold.it/100";
     $scope.fail = false;
     var photo = "";
 
+    //callback fuction to check if the username is unique
     function callback(res) {
         if (res == false) {
             $scope.fail = true;
@@ -10,9 +12,9 @@
         } else {
             $modalInstance.dismiss('cancel');
         }
-
     };
 
+    //file handle select  
     var handleFileSelect = function (evt) {
         console.log("start of file select");
         var files = evt.target.files;
@@ -34,9 +36,8 @@
     } else {
         alert('The File APIs are not fully supported in this browser.');
     }
-
+    //sign up validation and create new user
     $scope.ok = function () {
-
         var username = $scope.username_edit;
         var password = $scope.password_edit;
         var repassword = $scope.repassword_edit;
@@ -70,6 +71,8 @@
         }
     }
 
+
+    //cancel the modal instance of login
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };

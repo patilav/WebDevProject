@@ -7,8 +7,10 @@
     $scope.showcmt = false;
     $scope.fail = false;
 
+    //username is taken from routeParams 
     var username = $routeParams.username;
 
+    //change the type to make file control  visible
     $scope.changetype = function () {
         if ($scope.type == "Image") {
             $scope.write = false;
@@ -21,6 +23,7 @@
     $scope.fail = false;
     var photo = "";
 
+    //to load the photo on the loc of the 
     var handleFileSelect = function (evt) {
         var files = evt.target.files;
         var file = files[0];
@@ -44,6 +47,7 @@
         alert('The File APIs are not fully supported in this browser.');
     }
 
+    //populate the data of the artwork
     populateData();
 
     function populateData() {
@@ -53,6 +57,7 @@
         });
     }
 
+    //add artwork to the database
     $scope.addArtwork = function () {
         var artname = $scope.artworkname;
         var arttype = $scope.type;
@@ -104,11 +109,13 @@
         console.log("$scope.selectedArtwork" + $scope.selectedArtwork);
     }
 
+    //show the comment
     $scope.showComment = function (index) {
         selectartwork(index);
         $scope.showcmt = true;
     }
 
+    //remove the artwork
     $scope.remove = function (id) {
         $http.delete("/api/userartwork/"+ id + "/" + username)
         .success(function (response) {
@@ -116,6 +123,7 @@
         });
     }
 
+    //function to add comments 
     $scope.addComments = function (comment) {
         if (typeof $scope.selectedArtwork.comments == "undefined") {
             $scope.selectedArtwork.comments = [];
@@ -131,6 +139,7 @@
         });
     }
 
+    //get Previos like index to check the liked arts
     function getPreviousLikeIndex(likes, uname) {
         for (i = 0 ; i < likes.length ; i++) {
             if (likes[i].username == uname) {
@@ -139,7 +148,7 @@
         }
         return -1;
     }
-
+    //like function
     $scope.like = function (index) {
         console.log("In process of liking");
         selectartwork(index);
@@ -168,6 +177,7 @@
         }
     }
 
+    //already liked function to the show that 
     $scope.alreadyLiked = function (index) {
         if (typeof $scope.artwork[index].likes == "undefined") {
             return false;
@@ -180,6 +190,7 @@
         }
     }
 
+    //unlike function
     $scope.unlike = function (index) {
         console.log("In process of unlike");
         selectartwork(index);
@@ -206,6 +217,7 @@
         }
     }
 
+    //to trust src of the video to make it visible 
     $scope.trustSrc = function (src) {
         return $sce.trustAsResourceUrl(src);
     }

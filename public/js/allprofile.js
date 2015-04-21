@@ -1,14 +1,18 @@
 ﻿app.controller("AllProfilesController", function ($scope, $routeParams, $http, $sce) {
+
+    //get the username from routeParams
     var username = $routeParams.username;
     $scope.username = username;
     $scope.fail = false;
     $scope.save = false;
 
+    //get all the user profiles
     $http.get("/api/user")
     .success(function (response) {
         $scope.users = response;
     });
 
+    //function to check if the user is not current user 
     $scope.notCurrentUser = function (listuser) {
         if (username == listuser) {
             return false;
@@ -17,6 +21,7 @@
         }
     }
 
+    //function to delete the user 
     $scope.remove = function (id) {
         $http.delete("/api/user/" + id)
         .success(function (response) {
@@ -24,6 +29,7 @@
         });
     }
 
+    //function to follow the other users
 
     $scope.followUser = function (index) {
         $scope.selectedIndex = null;
@@ -49,6 +55,7 @@
             $scope.fail_msg = "Already Following user";
         }
     }
+    //function to unfollow the other users
 
     $scope.unfollowUser = function (index) {
         $scope.selectedIndex = null;
@@ -75,6 +82,8 @@
             $scope.fail_msg = "Not Following user";
         }
     }
+
+    //function to follow the other users
 
     $scope.showfollwingUsers = function (index) {
         $scope.selectedIndex = null;
